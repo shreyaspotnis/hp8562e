@@ -69,16 +69,32 @@ class hp8562e(object):
         read_string = self.device.readline()
         return read_string
 
-    def set_trace_parameters(self, start_freq, stop_frequency, rbw):
+
+    def set_trace_parameters(self, start_freq, stop_frequency, rbw, n_averages):
         """Set basic trace parameters.
 
         If you need to change other parameters, switch the spectrum analyzer
         to local control to change them."""
-        write_string = 'FA {0:d}; FB {1:d}\r\n; RB {2:d}'.format(start_freq,
-                       stop_frequency, rbw)
+        fmt_string = 'FA {0:d}; FB {1:d}\r\n; RB {2:d}; VAVG {3:d}'
+        write_string = fmt_string.format(start_freq,
+                                         stop_frequency, rbw, n_averages)
         print(write_string)
         self.device.write(write_string)
 
+    def fine_scan(self, start_frequency, step_frequency, n_steps, rbw,
+                  n_averages):
+        """Multiple traces over a wide frequency range."""
+        output_array = []
+        for j_step in range(n_steps):
+            fa = start_frequency + j_step*step_frequency
+            fb = fa + step_frequency
+            # print(fa, fb)
+            self.set_trace_parameters(fa, fb, rbw, n_averages)
+            output_array.append(self.get_xy())
+
+        freq = np.hstack([a[0] for a in output_array])
+        power = np.hstack([a[1] for a in output_array])
+        return freq, power
 
     def close(self):
         """Close connection to GPIB controller."""
