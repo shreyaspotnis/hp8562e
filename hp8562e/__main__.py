@@ -1,5 +1,4 @@
 import serial
-import zmq
 import numpy as np
 
 
