@@ -75,7 +75,7 @@ class hp8562e(object):
 
         If you need to change other parameters, switch the spectrum analyzer
         to local control to change them."""
-        fmt_string = 'FA {0:d}; FB {1:d}\r\n; RB {2:d}; VAVG {3:d}'
+        fmt_string = 'FA {0:d}; FB {1:d}\r\n; RB {2:d}; VAVG {3:d}\r\n'
         write_string = fmt_string.format(start_freq,
                                          stop_frequency, rbw, n_averages)
         print(write_string)
